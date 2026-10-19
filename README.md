@@ -19,4 +19,4 @@ Mais > Exportar backup (JSON, inclui fotos). Restaurar: Mais > Importar backup (
 Abra index.html#test: executa verificações de cálculo nutricional, validação numérica, backup e gráfico (resultado em aviso e console).
 
 ## Atualizar
-O app usa cache offline: ao alterar arquivos, mude 'atleta12-v1' em sw.js.
+O app usa cache offline: ao alterar arquivos, mude 'atleta12-v2' em sw.js.
