@@ -1,4 +1,23 @@
-const C='atleta12-v2',F=['./','index.html','manifest.json','icon.svg','icon-192.png','icon-512.png'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(F))));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x))))));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))});
+var CACHE = "treino-abcd-v1";
+var FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
+self.addEventListener("install", function (e) {
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }));
+  self.skipWaiting();
+});
+self.addEventListener("activate", function (e) {
+  e.waitUntil(caches.keys().then(function (ks) {
+    return Promise.all(ks.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+  }));
+  self.clients.claim();
+});
+// Rede primeiro (pega atualizações); sem internet, usa o que está guardado.
+self.addEventListener("fetch", function (e) {
+  if (e.request.method !== "GET") return;
+  e.respondWith(fetch(e.request).then(function (res) {
+    var copy = res.clone();
+    caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+    return res;
+  }).catch(function () {
+    return caches.match(e.request).then(function (r) { return r || caches.match("index.html"); });
+  }));
+});
